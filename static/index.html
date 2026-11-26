@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sentinel Scan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- =========================================================
+       SIDEBAR / NAV
+  ========================================================== -->
+  <nav class="sidebar" role="navigation" aria-label="Main navigation">
+    <div class="sidebar-brand">
+      <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" aria-hidden="true">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+      </svg>
+      <span class="brand-name">Sentinel Scan</span>
+    </div>
+
+    <ul class="nav-list" role="list">
+      <li>
+        <button class="nav-btn active" data-screen="new-scan" aria-current="page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/>
+            <line x1="8" y1="12" x2="16" y2="12"/>
+          </svg>
+          New Scan
+        </button>
+      </li>
+      <li>
+        <button class="nav-btn" data-screen="past-scans">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+          </svg>
+          Past Scans
+        </button>
+      </li>
+      <li>
+        <button class="nav-btn" data-screen="integrity">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            <polyline points="9 12 11 14 15 10"/>
+          </svg>
+          Integrity Check
+        </button>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <span class="sidebar-version">v1.0.0 — rule-based scanner</span>
+    </div>
+  </nav>
+
+  <!-- =========================================================
+       MAIN CONTENT AREA
+  ========================================================== -->
+  <main class="main" id="main-content">
+
+    <!-- ======================================================
+         SCREEN: NEW SCAN
+    ====================================================== -->
+    <section class="screen active" id="screen-new-scan" aria-label="New Scan">
+      <header class="screen-header">
+        <h1>New Scan</h1>
+        <p class="screen-subtitle">Enter the target URL to begin a vulnerability scan.</p>
+      </header>
+
+      <div class="card">
+        <form id="scan-form" novalidate>
+          <div class="form-group">
+            <label for="target-url" class="form-label">Target URL</label>
+            <input
+              type="url"
+              id="target-url"
+              name="target_url"
+              class="form-input"
+              placeholder="http://127.0.0.1:5000"
+              autocomplete="off"
+              spellcheck="false"
+              required
+              aria-describedby="url-hint"
+            >
+            <span class="form-hint" id="url-hint">
+              Include the scheme: <code>http://</code> or <code>https://</code>.
+              Private-network and localhost addresses are permitted without authorization.
+            </span>
+          </div>
+
+          <div class="form-group" id="auth-group" hidden>
+            <label class="checkbox-label">
+              <input type="checkbox" id="authorized" name="authorized" class="checkbox-input">
+              <span class="checkbox-custom" aria-hidden="true"></span>
+              <span>
+                I am authorized to test this target. I understand that
+                scanning systems without permission is illegal.
+              </span>
+            </label>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" id="start-btn">
+              Start Scan
+            </button>
+          </div>
+
+          <div class="form-error" id="form-error" role="alert" hidden></div>
+        </form>
+      </div>
+
+      <div class="info-card">
+        <h3 class="info-card-title">What gets scanned</h3>
+        <ul class="module-list">
+          <li>Security HTTP headers (CSP, HSTS, X-Frame-Options …)</li>
+          <li>Cookie flags (Secure, HttpOnly, SameSite)</li>
+          <li>TLS certificate and protocol (HTTPS targets)</li>
+          <li>Server and technology banner disclosure</li>
+          <li>Common exposed paths and directory listing</li>
+          <li>CORS misconfiguration (wildcard / reflected origin)</li>
+          <li>HTML forms without anti-CSRF tokens</li>
+          <li>Reflected XSS probe (harmless marker injection)</li>
+          <li>SQL injection probe (error-based, read-only)</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ======================================================
+         SCREEN: LIVE PROGRESS
+    ====================================================== -->
+    <section class="screen" id="screen-progress" aria-label="Scan in progress" aria-live="polite">
+      <header class="screen-header">
+        <h1>Scan in Progress</h1>
+        <p class="screen-subtitle" id="progress-target-label">Scanning…</p>
+      </header>
+
+      <div class="progress-bar-wrapper" role="progressbar" aria-valuemin="0" aria-valuemax="9"
+           aria-valuenow="0" id="progress-bar-wrapper">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+
+      <div class="progress-modules" id="progress-modules" aria-label="Module status"></div>
+
+      <div class="card findings-live" id="live-findings-wrapper" hidden>
+        <h2 class="card-title">Findings so far</h2>
+        <div id="live-findings-list"></div>
+      </div>
+    </section>
+
+    <!-- ======================================================
+         SCREEN: RESULTS
+    ====================================================== -->
+    <section class="screen" id="screen-results" aria-label="Scan results">
+      <header class="screen-header">
+        <div class="results-header-top">
+          <div>
+            <h1 id="results-title">Scan Results</h1>
+            <p class="screen-subtitle" id="results-subtitle"></p>
+          </div>
+          <div class="results-actions">
+            <button class="btn btn-secondary" id="verify-integrity-btn">Verify Integrity</button>
+            <button class="btn btn-secondary" id="export-json-btn">Export JSON</button>
+            <button class="btn btn-secondary" id="export-html-btn">Export HTML</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Severity summary chips -->
+      <div class="severity-summary" id="severity-summary" role="list" aria-label="Severity counts"></div>
+
+      <!-- Filter and search bar -->
+      <div class="filter-bar" role="search">
+        <input
+          type="search"
+          id="findings-search"
+          class="form-input search-input"
+          placeholder="Search findings…"
+          aria-label="Search findings"
+        >
+        <div class="filter-pills" id="filter-pills" role="group" aria-label="Filter by severity">
+          <button class="pill active" data-severity="all">All</button>
+          <button class="pill" data-severity="Critical">Critical</button>
+          <button class="pill" data-severity="High">High</button>
+          <button class="pill" data-severity="Medium">Medium</button>
+          <button class="pill" data-severity="Low">Low</button>
+          <button class="pill" data-severity="Info">Info</button>
+        </div>
+      </div>
+
+      <div id="findings-list" class="findings-list" aria-label="Findings"></div>
+
+      <p class="empty-state" id="no-findings-msg" hidden>No findings match the current filter.</p>
+    </section>
+
+    <!-- ======================================================
+         SCREEN: FINDING DETAIL
+    ====================================================== -->
+    <section class="screen" id="screen-finding" aria-label="Finding detail">
+      <header class="screen-header">
+        <button class="btn btn-ghost back-btn" id="back-to-results-btn" aria-label="Back to results">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+               width="16" height="16" aria-hidden="true">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          Back to results
+        </button>
+      </header>
+
+      <div class="card finding-detail" id="finding-detail-content">
+        <!-- Filled dynamically -->
+      </div>
+    </section>
+
+    <!-- ======================================================
+         SCREEN: INTEGRITY CHECK
+    ====================================================== -->
+    <section class="screen" id="screen-integrity" aria-label="Integrity check">
+      <header class="screen-header">
+        <h1>Ledger Integrity Check</h1>
+        <p class="screen-subtitle">
+          Recomputes the full hash chain and reports any tampered entries.
+        </p>
+      </header>
+
+      <div class="card">
+        <p style="margin-bottom: 16px; color: var(--text-secondary)">
+          The forensic ledger records every scan event and finding with a chained SHA-256
+          hash. Each entry includes the hash of the previous entry, making post-hoc
+          tampering detectable.
+        </p>
+        <button class="btn btn-primary" id="run-integrity-btn">Run Full Chain Verification</button>
+      </div>
+
+      <div id="integrity-result" class="integrity-result" hidden></div>
+
+      <div class="card" style="margin-top: 24px;" id="ledger-table-wrapper" hidden>
+        <h2 class="card-title">Recent Ledger Entries</h2>
+        <div class="table-scroll">
+          <table class="ledger-table" id="ledger-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Timestamp (UTC)</th>
+                <th>Scan</th>
+                <th>Action</th>
+                <th>Entry Hash (truncated)</th>
+              </tr>
+            </thead>
+            <tbody id="ledger-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================
+         SCREEN: PAST SCANS
+    ====================================================== -->
+    <section class="screen" id="screen-past-scans" aria-label="Past scans">
+      <header class="screen-header">
+        <h1>Past Scans</h1>
+        <p class="screen-subtitle">All previously completed and running scans.</p>
+      </header>
+
+      <div id="past-scans-list" class="past-scans-list" aria-label="Scan history"></div>
+      <p class="empty-state" id="no-past-scans-msg" hidden>No scans recorded yet.</p>
+    </section>
+
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
