@@ -112,14 +112,42 @@ def verify_chain(scan_id: Optional[int] = None) -> dict:
     """
     Recompute the hash chain and return a verification result.
 
-    If scan_id is given, only the entries for that scan are checked in
-    isolation (prev_hash context is still the global chain, so a targeted
-    tamper will still surface).
-
-    Returns a dict with keys: ok, checked, first_broken_id, message.
+    Verifies:
+      1. Every ledger row's entry_hash matches its fields.
+      2. Continuity: each row's prev_hash matches the previous row's entry_hash (genesis for row 1).
+      3. Cross-verification: every finding row's evidence_raw re-hashes to evidence_hash,
+         and matches a corresponding ledger entry with that evidence_hash.
     """
     conn = get_conn()
 
+    # 1. Cross-verify findings table evidence
+    if scan_id is not None:
+        finding_rows = conn.execute("SELECT id, evidence_raw, evidence_hash FROM findings WHERE scan_id = ? ORDER BY id ASC", (scan_id,)).fetchall()
+    else:
+        finding_rows = conn.execute("SELECT id, evidence_raw, evidence_hash FROM findings ORDER BY id ASC").fetchall()
+
+    for f_row in finding_rows:
+        recomputed_hash = _sha256(f_row["evidence_raw"])
+        if recomputed_hash != f_row["evidence_hash"]:
+            msg = f"Integrity violation detected in findings table at finding #{f_row['id']}: stored evidence text does not match evidence_hash."
+            return {
+                "ok": False,
+                "checked": 0,
+                "first_broken_id": f_row["id"],
+                "message": msg,
+            }
+        # Ensure it exists in ledger
+        ledger_match = conn.execute("SELECT id FROM ledger WHERE evidence_hash = ?", (f_row["evidence_hash"],)).fetchone()
+        if not ledger_match:
+            msg = f"Integrity violation detected: finding #{f_row['id']} has no matching entry in forensic ledger."
+            return {
+                "ok": False,
+                "checked": 0,
+                "first_broken_id": f_row["id"],
+                "message": msg,
+            }
+
+    # 2. Verify ledger entries and continuity
     if scan_id is not None:
         rows = conn.execute(
             "SELECT * FROM ledger WHERE scan_id = ? ORDER BY id ASC", (scan_id,)
@@ -131,11 +159,35 @@ def verify_chain(scan_id: Optional[int] = None) -> dict:
 
     checked = 0
     first_broken_id = None
+    expected_prev = GENESIS_HASH
 
-    # For a full-chain check we know prev_hash of first row; for a scan-scoped
-    # check we trust the stored prev_hash of the first row (we cannot walk back
-    # further without all entries).
-    for row in rows:
+    for idx, row in enumerate(rows):
+        # Continuity check (for global chain check, or sequential within list)
+        if scan_id is None:
+            if row["prev_hash"] != expected_prev:
+                first_broken_id = row["id"]
+                msg = f"Integrity violation detected at ledger entry #{first_broken_id}: prev_hash does not match preceding entry_hash (chain broken or row deleted)."
+                return {
+                    "ok": False,
+                    "checked": checked,
+                    "first_broken_id": first_broken_id,
+                    "message": msg,
+                }
+        else:
+            # For scan-scoped check: verify first entry links to a known ledger entry or genesis
+            if idx == 0:
+                if row["prev_hash"] != GENESIS_HASH:
+                    prev_exists = conn.execute("SELECT id FROM ledger WHERE entry_hash = ?", (row["prev_hash"],)).fetchone()
+                    if not prev_exists:
+                        first_broken_id = row["id"]
+                        msg = f"Integrity violation detected at ledger entry #{first_broken_id}: prev_hash does not match any valid preceding ledger entry."
+                        return {
+                            "ok": False,
+                            "checked": checked,
+                            "first_broken_id": first_broken_id,
+                            "message": msg,
+                        }
+
         expected_entry_hash = _compute_entry_hash(
             row["timestamp"],
             row["scan_id"],
@@ -146,16 +198,20 @@ def verify_chain(scan_id: Optional[int] = None) -> dict:
         checked += 1
         if expected_entry_hash != row["entry_hash"]:
             first_broken_id = row["id"]
-            break
+            msg = f"Integrity violation detected at ledger entry #{first_broken_id}. Checked {checked} entries before finding the first broken link."
+            return {
+                "ok": False,
+                "checked": checked,
+                "first_broken_id": first_broken_id,
+                "message": msg,
+            }
+        expected_prev = row["entry_hash"]
 
     ok = first_broken_id is None
     if ok:
         msg = f"All {checked} ledger entries verified successfully. Chain is intact."
     else:
-        msg = (
-            f"Integrity violation detected at ledger entry #{first_broken_id}. "
-            f"Checked {checked} entries before finding the first broken link."
-        )
+        msg = f"Integrity violation detected at ledger entry #{first_broken_id}."
 
     return {
         "ok": ok,

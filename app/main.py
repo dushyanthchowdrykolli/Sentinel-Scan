@@ -279,7 +279,7 @@ def export_html_report(scan_id: int):
     return HTMLResponse(
         content=html,
         headers={
-            "Content-Disposition": f'attachment; filename="sentinel-scan-{scan_id}.html"'
+            "Content-Disposition": f'inline; filename="sentinel-scan-{scan_id}.html"'
         },
     )
 

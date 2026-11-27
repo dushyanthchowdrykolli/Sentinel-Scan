@@ -61,6 +61,13 @@ def export_json(scan_id: int) -> dict:
     for f in findings:
         severity_counts[f["severity"]] = severity_counts.get(f["severity"], 0) + 1
 
+    scan_meta = {}
+    if scan.get("scan_meta"):
+        try:
+            scan_meta = json.loads(scan["scan_meta"])
+        except Exception:
+            scan_meta = {"raw": scan["scan_meta"]}
+
     return {
         "report_meta": {
             "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -68,9 +75,14 @@ def export_json(scan_id: int) -> dict:
             "version": "1.0.0",
         },
         "scan": scan,
+        "timing": {
+            "total_duration_seconds": scan_meta.get("total_duration_seconds"),
+            "module_durations": scan_meta.get("module_durations", {}),
+        },
         "summary": {
             "total_findings": len(findings),
             "severity_counts": severity_counts,
+            "total_duration_seconds": scan_meta.get("total_duration_seconds"),
             "ledger_tail_hash": tail_hash,
         },
         "findings": findings,
@@ -138,6 +150,34 @@ def export_html(scan_id: int) -> str:
           <td>{_severity_badge(sev)}</td>
           <td class="count">{count}</td>
         </tr>"""
+
+    scan_meta = {}
+    if scan.get("scan_meta"):
+        try:
+            scan_meta = json.loads(scan["scan_meta"])
+        except Exception:
+            pass
+
+    total_duration = scan_meta.get("total_duration_seconds", "N/A")
+    module_durations = scan_meta.get("module_durations", {})
+
+    timing_rows = ""
+    for mod_name, dur in module_durations.items():
+        timing_rows += f"""
+        <tr>
+          <td>{html_lib.escape(mod_name)}</td>
+          <td class="count">{dur} s</td>
+        </tr>"""
+
+    timing_table_html = ""
+    if module_durations:
+        timing_table_html = f"""
+  <h2>Execution Timings</h2>
+  <table class="summary-table" style="min-width:320px">
+    <thead><tr><th>Module</th><th>Elapsed Time</th></tr></thead>
+    <tbody>{timing_rows}</tbody>
+    <tfoot><tr><td><strong>Total Duration</strong></td><td class="count"><strong>{total_duration} s</strong></td></tr></tfoot>
+  </table>"""
 
     return f"""<!DOCTYPE html>
 <html lang="en">
@@ -208,6 +248,7 @@ def export_html(scan_id: int) -> str:
     <tbody>{summary_rows}</tbody>
     <tfoot><tr><td><strong>Total</strong></td><td class="count"><strong>{len(findings)}</strong></td></tr></tfoot>
   </table>
+{timing_table_html}
 
   <div class="ledger-box">
     <strong>Forensic Ledger Tail Hash (SHA-256)</strong><br>

@@ -178,9 +178,12 @@ def run_scan(
     """
     conn = get_conn()
     session = _make_session()
+    scan_start_perf = time.perf_counter()
+    module_timings: dict[str, float] = {}
 
     try:
         for module_name, module_fn in MODULES:
+            mod_start = time.perf_counter()
             try:
                 findings: list[Finding] = module_fn(target_url, session)
             except Exception as exc:
@@ -191,6 +194,9 @@ def run_scan(
                     evidence_payload=f"Module '{module_name}' raised: {exc}",
                     scan_id=scan_id,
                 )
+
+            mod_elapsed = round(time.perf_counter() - mod_start, 3)
+            module_timings[module_name] = mod_elapsed
 
             persisted_findings = []
             for f in findings:
@@ -204,23 +210,38 @@ def run_scan(
             time.sleep(REQUEST_INTERVAL)
 
         # Mark scan complete
+        total_duration = round(time.perf_counter() - scan_start_perf, 3)
         finished_at = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        
+        meta = {
+            "total_duration_seconds": total_duration,
+            "module_durations": module_timings,
+        }
+        meta_json = json.dumps(meta)
+
         conn.execute(
-            "UPDATE scans SET status='done', finished_at=? WHERE id=?",
-            (finished_at, scan_id),
+            "UPDATE scans SET status='done', finished_at=?, scan_meta=? WHERE id=?",
+            (finished_at, meta_json, scan_id),
         )
         conn.commit()
         ledger.append(
             action="scan_completed",
-            evidence_payload=json.dumps({"scan_id": scan_id, "finished_at": finished_at}),
+            evidence_payload=json.dumps({"scan_id": scan_id, "finished_at": finished_at, "meta": meta}),
             scan_id=scan_id,
         )
 
     except Exception as exc:
+        total_duration = round(time.perf_counter() - scan_start_perf, 3)
+        meta = {
+            "total_duration_seconds": total_duration,
+            "module_durations": module_timings,
+            "error": str(exc),
+        }
+        meta_json = json.dumps(meta)
         # Fatal error — mark scan as errored
         conn.execute(
-            "UPDATE scans SET status='error', finished_at=? WHERE id=?",
-            (datetime.now(timezone.utc).isoformat(), scan_id),
+            "UPDATE scans SET status='error', finished_at=?, scan_meta=? WHERE id=?",
+            (datetime.now(timezone.utc).isoformat(), meta_json, scan_id),
         )
         conn.commit()
         ledger.append(

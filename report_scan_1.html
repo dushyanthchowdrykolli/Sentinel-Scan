@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sentinel Scan Report — http://127.0.0.1:5000</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:Inter,system-ui,sans-serif;font-size:14px;line-height:1.6;
+         color:#1a2332;background:#fff;padding:40px}
+    h1{font-size:24px;font-weight:700;color:#0F1B2D;margin-bottom:4px}
+    h2{font-size:18px;font-weight:600;color:#0F1B2D;margin:32px 0 12px}
+    h3{font-size:15px;font-weight:600;color:#0F1B2D;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+    h4{font-size:13px;font-weight:600;color:#374151;margin:14px 0 4px}
+    p{margin-bottom:8px;color:#374151}
+    code{font-family:ui-monospace,monospace;font-size:12px;background:#f3f4f6;
+          padding:1px 4px;border-radius:3px}
+    pre.evidence{font-family:ui-monospace,monospace;font-size:11px;background:#f8f9fa;
+                 border:1px solid #e5e7eb;padding:12px;border-radius:4px;
+                 white-space:pre-wrap;word-break:break-all;overflow-x:auto;
+                 color:#374151;margin-bottom:8px}
+    .hash{font-size:11px;word-break:break-all}
+    .badge{display:inline-block;padding:2px 8px;border-radius:3px;
+            font-size:11px;font-weight:600;letter-spacing:.03em}
+    .badge-critical{background:#1a0000;color:#fff}
+    .badge-high{background:#450a0a;color:#fff}
+    .badge-medium{background:#78350f;color:#fff}
+    .badge-low{background:#1e3a5f;color:#fff}
+    .badge-info{background:#374151;color:#fff}
+    .meta-table{width:100%;border-collapse:collapse;margin-bottom:12px;font-size:13px}
+    .meta-table th,.meta-table td{padding:5px 8px;border:1px solid #e5e7eb;text-align:left}
+    .meta-table th{background:#f9fafb;font-weight:600;width:160px;color:#374151}
+    .summary-table{border-collapse:collapse;margin-bottom:16px}
+    .summary-table td{padding:4px 12px;border:1px solid #e5e7eb}
+    .summary-table .count{font-weight:700;text-align:right}
+    .finding{border:1px solid #e5e7eb;border-radius:6px;padding:20px;
+              margin-bottom:20px;page-break-inside:avoid}
+    .header-block{border-bottom:2px solid #0F1B2D;padding-bottom:12px;margin-bottom:24px}
+    .meta-line{font-size:12px;color:#6b7280;margin-top:4px}
+    .ledger-box{background:#f0f9ff;border:1px solid #bae6fd;border-radius:4px;
+                padding:10px 14px;font-size:12px;margin-top:8px}
+    .ledger-box code{background:transparent;font-size:11px}
+    .num{color:#6b7280;font-weight:400}
+    @media print{
+      body{padding:20px}
+      .finding{page-break-inside:avoid}
+    }
+  </style>
+</head>
+<body>
+  <div class="header-block">
+    <h1>Sentinel Scan — Vulnerability Report</h1>
+    <div class="meta-line">
+      Target: <strong>http://127.0.0.1:5000</strong> &nbsp;|&nbsp;
+      Scan ID: #1 &nbsp;|&nbsp;
+      Started: 2026-11-27T09:13:47+00:00 &nbsp;|&nbsp;
+      Finished: 2026-11-27T09:13:49+00:00 &nbsp;|&nbsp;
+      Authorized: Localhost / private network
+    </div>
+    <div class="meta-line">Report generated: 2026-11-27 09:43 UTC</div>
+  </div>
+
+  <h2>Executive Summary</h2>
+  <table class="summary-table">
+    <thead><tr><th>Severity</th><th>Count</th></tr></thead>
+    <tbody>
+        <tr>
+          <td><span class="badge badge-critical">Critical</span></td>
+          <td class="count">0</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-high">High</span></td>
+          <td class="count">3</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-medium">Medium</span></td>
+          <td class="count">5</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-low">Low</span></td>
+          <td class="count">3</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-info">Info</span></td>
+          <td class="count">0</td>
+        </tr></tbody>
+    <tfoot><tr><td><strong>Total</strong></td><td class="count"><strong>11</strong></td></tr></tfoot>
+  </table>
+
+  <h2>Execution Timings</h2>
+  <table class="summary-table" style="min-width:320px">
+    <thead><tr><th>Module</th><th>Elapsed Time</th></tr></thead>
+    <tbody>
+        <tr>
+          <td>Security Headers</td>
+          <td class="count">0.004 s</td>
+        </tr>
+        <tr>
+          <td>Cookie Flags</td>
+          <td class="count">0.018 s</td>
+        </tr>
+        <tr>
+          <td>TLS / Certificate</td>
+          <td class="count">0.0 s</td>
+        </tr>
+        <tr>
+          <td>Server Banners</td>
+          <td class="count">0.028 s</td>
+        </tr>
+        <tr>
+          <td>Exposed Paths</td>
+          <td class="count">0.212 s</td>
+        </tr>
+        <tr>
+          <td>CORS Misconfiguration</td>
+          <td class="count">0.062 s</td>
+        </tr>
+        <tr>
+          <td>CSRF Token Check</td>
+          <td class="count">0.009 s</td>
+        </tr>
+        <tr>
+          <td>Reflected XSS Probe</td>
+          <td class="count">0.01 s</td>
+        </tr>
+        <tr>
+          <td>SQL Injection Probe</td>
+          <td class="count">0.024 s</td>
+        </tr></tbody>
+    <tfoot><tr><td><strong>Total Duration</strong></td><td class="count"><strong>2.203 s</strong></td></tr></tfoot>
+  </table>
+
+  <div class="ledger-box">
+    <strong>Forensic Ledger Tail Hash (SHA-256)</strong><br>
+    <code>6e6ca3b9f11c3b9f44c809f45196eaece4251ebf6df7432d871faecdcf932b86</code><br>
+    <span style="color:#374151">This hash summarises the entire evidence chain for this scan. 
+    Any post-hoc tampering with the database will cause the integrity check to fail.</span>
+  </div>
+
+  <h2>Findings</h2>
+  
+        <section class="finding" id="finding-1">
+          <h3><span class="num">1.</span> Missing Content-Security-Policy Header
+            <span class="badge badge-high">High</span>
+          </h3>
+          <table class="meta-table">
+            <tr><th>Category</th><td>A05 Security Misconfiguration</td></tr>
+            <tr><th>Severity</th><td><span class="badge badge-high">High</span></td></tr>
+            <tr><th>Affected URL</th><td><code>http://127.0.0.1:5000</code></td></tr>
+            <tr><th>Evidence SHA-256</th><td><code class="hash">125bfa71e61a5f07b73201c46852d3b021593e35faff79d0cb42bf89380dbc51</code></td></tr>
+          </table>
+          <h4>Description</h4>
+          <p>The HTTP response does not include the &#x27;Content-Security-Policy&#x27; security header. CSP restricts which resources the browser is permitted to load, mitigating XSS and data injection attacks.</p>
+          <h4>Evidence</h4>
+          <pre class="evidence">=== REQUEST ===
+GET http://127.0.0.1:5000
+User-Agent: SentinelScan/1.0 (security-research; authorized-scan)
+Accept-Encoding: gzip, deflate, zstd
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Connection: keep-alive
+Accept-Language: en-US,en;q=0.5
+
+
+=== RESPONSE ===
+Status: 200
+Server: Werkzeug/3.1.9 Python/3.14.10, Werkzeug/3.0.1 Python/3.11
+Date: Fri, 27 Nov 2026 09:13:47 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 2085
+Set-Cookie: lab_session=demo-session-token-12345; Path=/
+X-Powered-By: Flask/3.0.3 Python/3.11
+Connection: close
+
+Response excerpt:
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;title&gt;Lab Target — Home&lt;/title&gt;
+  &lt;style&gt;
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 760px;
+      margin: 40px auto;
+      padding: 0 20px;
+      color: #222;
+    }
+    h1 { color: #b91c1c; }
+    h2 { color: #374151; }
+    nav a { margin-right: 16px; color: #1d4ed8; text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+    .warning { background: #fef3c7; border: 1px solid #fcd34d;
+                padding: 10px 14px; border-radius: 4px; margin-bottom: 16px;
+                font-size: .875rem; }
+    pre { background: #f3f4f6; padding: 12px; border-radius: 4px;
+           font-size: .875rem; white-space: pre-wrap; }
+    input[type=text], input[type=password] {
+      padding: 7px 10px; border: 1px solid #d1d5db;
+      border-radius: 4px; font-size: 1rem; width: 260px;
+    }
+    button { padding: 7px 20px; background: #1d4ed8; color: #fff;
+              border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class=&quot;warning&quot;&gt;
+    This is an intentionally vulnerable application for security testing demos only.
+    Do not expose it to any network.
+  &lt;/div&gt;
+  &lt;nav&gt;
+    &lt;a href=&quot;/&quot;&gt;Home&lt;/a&gt;
+    &lt;a href=&quot;/xss&quot;&gt;XSS Demo&lt;/a&gt;
+    &lt;a href=&quot;/sqli&quot;&gt;SQLi Demo&lt;/a&gt;
+    &lt;a href=&quot;/login&quot;&gt;Login (no CSRF)&lt;/a&gt;
+    &lt;a href=&quot;/robots.txt&quot;&gt;robots.txt&lt;/a&gt;
+  &lt;/nav&gt;
+  &lt;hr style=&quot;margin: 16px 0&quot;&gt;
+  
+    &lt;h1&gt;Sentinel Scan Lab Target&lt;/h1&gt;
+    &lt;p&gt;This F
+
+=== NOTES ===
+Header &#x27;Content-Security-Policy&#x27; was not present in the HTTP response.</pre>
+          <h4>Remediation</h4>
+          <p>Add a Content-Security-Policy header to your web server or application. Start with a strict policy such as: &quot;default-src &#x27;self&#x27;&quot; and loosen only as needed. Refer to https://content-security-policy.com for guidance.</p>
+        </section>
+        
+        <section class="finding" id="finding-10">
+          <h3><span class="num">2.</span> Sensitive Path Accessible: Admin Panel
+            <span class="badge badge-high">High</span>
+          </h3>
+          <table class="meta-table">
+            <tr><th>Category</th><td>A05 Security Misconfiguration</td></tr>
+            <tr><th>Severity</th><td><span class="badge badge-high">High</span></td></tr>
+            <tr><th>Affected URL</th><td><code>http://127.0.0.1:5000/admin</code></td></tr>
+            <tr><th>Evidence SHA-256</th><td><code class="hash">cede0a415baf2c5aedc06c701d16339701fb4d1ee593ccd1528a451a945a4911</code></td></tr>
+          </table>
+          <h4>Description</h4>
+          <p>The path &#x27;/admin&#x27; responded with HTTP 200. Administrative interface exposed publicly. </p>
+          <h4>Evidence</h4>
+          <pre class="evidence">=== REQUEST ===
+GET http://127.0.0.1:5000/admin
+User-Agent: SentinelScan/1.0 (security-research; authorized-scan)
+Accept-Encoding: gzip, deflate, zstd
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Connection: keep-alive
+Accept-Language: en-US,en;q=0.5
+Cookie: lab_session=demo-session-token-12345
+
+
+=== RESPONSE ===
+Status: 200
+Server: Werkzeug/3.1.9 Python/3.14.10, Werkzeug/3.0.1 Python/3.11
+Date: Fri, 27 Nov 2026 09:13:48 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 1577
+Set-Cookie: lab_session=demo-session-token-12345; Path=/
+X-Powered-By: Flask/3.0.3 Python/3.11
+Connection: close
+
+Response excerpt:
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;title&gt;Lab Target — Admin&lt;/title&gt;
+  &lt;style&gt;
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 760px;
+      margin: 40px auto;
+      padding: 0 20px;
+      color: #222;
+    }
+    h1 { color: #b91c1c; }
+    h2 { color: #374151; }
+    nav a { margin-right: 16px; color: #1d4ed8; text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+    .warning { background: #fef3c7; border: 1px solid #fcd34d;
+                padding: 10px 14px; border-radius: 4px; margin-bottom: 16px;
+                font-size: .875rem; }
+    pre { background: #f3f4f6; padding: 12px; border-radius: 4px;
+           font-size: .875rem; white-space: pre-wrap; }
+    input[type=text], input[type=password] {
+      padding: 7px 10px; border: 1px solid #d1d5db;
+      border-radius: 4px; font-size: 1rem; width: 260px;
+    }
+    button { padding: 7px 20px; background: #1d4ed8; color: #fff;
+              border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class=&quot;warning&quot;&gt;
+    This is an intentionally vulnerable application for security testing demos only.
+    Do not expose it to any network.
+  &lt;/div&gt;
+  &lt;nav&gt;
+    &lt;a href=&quot;/&quot;&gt;Home&lt;/a&gt;
+    &lt;a href=&quot;/xss&quot;&gt;XSS Demo&lt;/a&gt;
+    &lt;a href=&quot;/sqli&quot;&gt;SQLi Demo&lt;/a&gt;
+    &lt;a href=&quot;/login&quot;&gt;Login (no CSRF)&lt;/a&gt;
+    &lt;a href=&quot;/robots.txt&quot;&gt;robots.txt&lt;/a&gt;
+  &lt;/nav&gt;
+  &lt;hr style=&quot;margin: 16px 0&quot;&gt;
+  
+    &lt;h2&gt;Admin Panel&lt;/h2&gt;
+    &lt;p&gt;This admin page is
+
+=== NOTES ===
+Path: /admin
+HTTP status: 200
+Reason: Administrative interface exposed publicly
+</pre>
+          <h4>Remediation</h4>
+          <p>Restrict or remove access to &#x27;/admin&#x27;. Ensure sensitive files and directories are not served by the web server. For directory listings: set &#x27;Options -Indexes&#x27; in Apache or &#x27;autoindex off;&#x27; in nginx. Remove .git, .env, and backup files from web-accessible directories.</p>
+        </section>
+        
+        <section class="finding" id="finding-11">
+          <h3><span class="num">3.</span> Sensitive Path Accessible: Robots.txt
+            <span class="badge badge-high">High</span>
+          </h3>
+          <table class="meta-table">
+            <tr><th>Category</th><td>A05 Security Misconfiguration</td></tr>
+            <tr><th>Severity</th><td><span class="badge badge-high">High</span></td></tr>
+            <tr><th>Affected URL</th><td><code>http://127.0.0.1:5000/robots.txt</code></td></tr>
+            <tr><th>Evidence SHA-256</th><td><code class="hash">a1a1df62a939f2fe838e19a5d716de5055e250a5553414419ccfeae8e777a865</code></td></tr>
+          </table>
+          <h4>Description</h4>
+          <p>The path &#x27;/robots.txt&#x27; responded with HTTP 200. robots.txt may reveal hidden paths and admin endpoints. </p>
+          <h4>Evidence</h4>
+          <pre class="evidence">=== REQUEST ===
+GET http://127.0.0.1:5000/robots.txt
+User-Agent: SentinelScan/1.0 (security-research; authorized-scan)
+Accept-Encoding: gzip, deflate, zstd
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Connection: keep-alive
+Accept-Language: en-US,en;q=0.5
+Cookie: lab_session=demo-session-token-12345
+
+
+=== RESPONSE ===
+Status: 200
+Server: Werkzeug/3.1.9 Python/3.14.10
+Date: Fri, 27 Nov 2026 09:13:48 GMT
+Content-Type: text/plain
+Content-Length: 70
+Connection: close
+
+Response excerpt:
+User-agent: *
+Disallow: /admin
+Disallow: /internal/
+Disallow: /backup
+
+
+=== NOTES ===
+Path: /robots.txt
+HTTP status: 200
+Reason: robots.txt may reveal hidden paths and admin endpoints
+</pre>
+          <h4>Remediation</h4>
+          <p>Restrict or remove access to &#x27;/robots.txt&#x27;. Ensure sensitive files and directories are not served by the web server. For directory listings: set &#x27;Options -Indexes&#x27; in Apache or &#x27;autoindex off;&#x27; in nginx. Remove .git, .env, and backup files from web-accessible directories.</p>
+        </section>
+        
+        <section class="finding" id="finding-2">
+          <h3><span class="num">4.</span> Missing X-Frame-Options Header
+            <span class="badge badge-medium">Medium</span>
+          </h3>
+          <table class="meta-table">
+            <tr><th>Category</th><td>A05 Security Misconfiguration</td></tr>
+            <tr><th>Severity</th><td><span class="badge badge-medium">Medium</span></td></tr>
+            <tr><th>Affected URL</th><td><code>http://127.0.0.1:5000</code></td></tr>
+            <tr><th>Evidence SHA-256</th><td><code class="hash">b8fe2072201fa7fb8cee4d7da880e963afa4f470bec92e78a478c6e1059b7767</code></td></tr>
+          </table>
+          <h4>Description</h4>
+          <p>The HTTP response does not include the &#x27;X-Frame-Options&#x27; security header. This header prevents the page from being embedded in an iframe, defending against clickjacking attacks.</p>
+          <h4>Evidence</h4>
+          <pre class="evidence">=== REQUEST ===
+GET http://127.0.0.1:5000
+User-Agent: SentinelScan/1.0 (security-research; authorized-scan)
+Accept-Encoding: gzip, deflate, zstd
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Connection: keep-alive
+Accept-Language: en-US,en;q=0.5
+
+
+=== RESPONSE ===
+Status: 200
+Server: Werkzeug/3.1.9 Python/3.14.10, Werkzeug/3.0.1 Python/3.11
+Date: Fri, 27 Nov 2026 09:13:47 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 2085
+Set-Cookie: lab_session=demo-session-token-12345; Path=/
+X-Powered-By: Flask/3.0.3 Python/3.11
+Connection: close
+
+Response excerpt:
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;title&gt;Lab Target — Home&lt;/title&gt;
+  &lt;style&gt;
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 760px;
+      margin: 40px auto;
+      padding: 0 20px;
+      color: #222;
+    }
+    h1 { color: #b91c1c; }
+    h2 { color: #374151; }
+    nav a { margin-right: 16px; color: #1d4ed8; text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+    .warning { background: #fef3c7; border: 1px solid #fcd34d;
+                padding: 10px 14px; border-radius: 4px; margin-bottom: 16px;
+                font-size: .875rem; }
+    pre { background: #f3f4f6; padding: 12px; border-radius: 4px;
+           font-size: .875rem; white-space: pre-wrap; }
+    input[type=text], input[type=password] {
+      padding: 7px 10px; border: 1px solid #d1d5db;
+      border-radius: 4px; font-size: 1rem; width: 260px;
+    }
+    button { padding: 7px 20px; background: #1d4ed8; color: #fff;
+              border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class=&quot;warning&quot;&gt;
+    This is an intentionally vulnerable application for security testing demos only.
+    Do not expose it to any network.
+  &lt;/div&gt;
+  &lt;nav&gt;
+    &lt;a href=&quot;/&quot;&gt;Home&lt;/a&gt;
+    &lt;a href=&quot;/xss&quot;&gt;XSS Demo&lt;/a&gt;
+    &lt;a href=&quot;/sqli&quot;&gt;SQLi Demo&lt;/a&gt;
+    &lt;a href=&quot;/login&quot;&gt;Login (no CSRF)&lt;/a&gt;
+    &lt;a href=&quot;/robots.txt&quot;&gt;robots.txt&lt;/a&gt;
+  &lt;/nav&gt;
+  &lt;hr style=&quot;margin: 16px 0&quot;&gt;
+  
+    &lt;h1&gt;Sentinel Scan Lab Target&lt;/h1&gt;
+    &lt;p&gt;This F
+
+=== NOTES ===
+Header &#x27;X-Frame-Options&#x27; was not present in the HTTP response.</pre>
+          <h4>Remediation</h4>
+          <p>Add: X-Frame-Options: DENY or X-Frame-Options: SAMEORIGIN to prevent framing by malicious sites.</p>
+        </section>
+        
+        <section class="finding" id="finding-3">
+          <h3><span class="num">5.</span> Missing X-Content-Type-Options Header
+            <span class="badge badge-medium">Medium</span>
+          </h3>
+          <table class="meta-table">
+            <tr><th>Category</th><td>A05 Security Misconfiguration</td></tr>
+            <tr><th>Severity</th><td><span class="badge badge-medium">Medium</span></td></tr>
+            <tr><th>Affected URL</th><td><code>http://127.0.0.1:5000</code></td></tr>
+            <tr><th>Evidence SHA-256</th><td><code class="hash">1f5012659751b1331772f2ce0b8b61e7b8d593357d614a1980379934f535350d</code></td></tr>
+          </table>
+          <h4>Description</h4>
+          <p>The HTTP response does not include the &#x27;X-Content-Type-Options&#x27; security header. Setting this to &#x27;nosniff&#x27; stops browsers from MIME-sniffing responses away from the declared content type.</p>
+          <h4>Evidence</h4>
+          <pre class="evidence">=== REQUEST ===
+GET http://127.0.0.1:5000
+User-Agent: SentinelScan/1.0 (security-research; authorized-scan)
+Accept-Encoding: gzip, deflate, zstd
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Connection: keep-alive
+Accept-Language: en-US,en;q=0.5
+
+
+=== RESPONSE ===
+Status: 200
+Server: Werkzeug/3.1.9 Python/3.14.10, Werkzeug/3.0.1 Python/3.11
+Date: Fri, 27 Nov 2026 09:13:47 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 2085
+Set-Cookie: lab_session=demo-session-token-12345; Path=/
+X-Powered-By: Flask/3.0.3 Python/3.11
+Connection: close
+
+Response excerpt:
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;title&gt;Lab Target — Home&lt;/title&gt;
+  &lt;style&gt;
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 760px;
+      margin: 40px auto;
+      padding: 0 20px;
+      color: #222;
+    }
+    h1 { color: #b91c1c; }
+    h2 { color: #374151; }
+    nav a { margin-right: 16px; color: #1d4ed8; text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+    .warning { background: #fef3c7; border: 1px solid #fcd34d;
+                padding: 10px 14px; border-radius: 4px; margin-bottom: 16px;
+                font-size: .875rem; }
+    pre { background: #f3f4f6; padding: 12px; border-radius: 4px;
+           font-size: .875rem; white-space: pre-wrap; }
+    input[type=text], input[type=password] {
+      padding: 7px 10px; border: 1px solid #d1d5db;
+      border-radius: 4px; font-size: 1rem; width: 260px;
+    }
+    button { padding: 7px 20px; background: #1d4ed8; color: #fff;
+              border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class=&quot;warning&quot;&gt;
+    This is an intentionally vulnerable application for security testing demos only.
+    Do not expose it to any network.
+  &lt;/div&gt;
+  &lt;nav&gt;
+    &lt;a href=&quot;/&quot;&gt;Home&lt;/a&gt;
+    &lt;a href=&quot;/xss&quot;&gt;XSS Demo&lt;/a&gt;
+    &lt;a href=&quot;/sqli&quot;&gt;SQLi Demo&lt;/a&gt;
+    &lt;a href=&quot;/login&quot;&gt;Login (no CSRF)&lt;/a&gt;
+    &lt;a href=&quot;/robots.txt&quot;&gt;robots.txt&lt;/a&gt;
+  &lt;/nav&gt;
+  &lt;hr style=&quot;margin: 16px 0&quot;&gt;
+  
+    &lt;h1&gt;Sentinel Scan Lab Target&lt;/h1&gt;
+    &lt;p&gt;This F
+
+=== NOTES ===
+Header &#x27;X-Content-Type-Options&#x27; was not present in the HTTP response.</pre>
+          <h4>Remediation</h4>
+          <p>Add: X-Content-Type-Options: nosniff to all responses.</p>
+        </section>
+        
+        <section class="finding" id="finding-6">
+          <h3><span class="num">6.</span> Cookie &#x27;lab_session&#x27; Missing HttpOnly Flag
+            <span class="badge badge-medium">Medium</span>
+          </h3>
+          <table class="meta-table">
+            <tr><th>Category</th><td>A02 Cryptographic Failures</td></tr>
+            <tr><th>Severity</th><td><span class="badge badge-medium">Medium</span></td></tr>
+            <tr><th>Affected URL</th><td><code>http://127.0.0.1:5000</code></td></tr>
+            <tr><th>Evidence SHA-256</th><td><code class="hash">950629d8f30a9b228523eb1bca47c3e8c529f8d43fc4243dad8048541cb5d492</code></td></tr>
+          </table>
+          <h4>Description</h4>
+          <p>The cookie &#x27;lab_session&#x27; does not carry the HttpOnly flag. Without this flag, client-side JavaScript can read the cookie, making it vulnerable to theft via cross-site scripting (XSS).</p>
+          <h4>Evidence</h4>
+          <pre class="evidence">=== REQUEST ===
+GET http://127.0.0.1:5000
+User-Agent: SentinelScan/1.0 (security-research; authorized-scan)
+Accept-Encoding: gzip, deflate, zstd
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Connection: keep-alive
+Accept-Language: en-US,en;q=0.5
+Cookie: lab_session=demo-session-token-12345
+
+
+=== RESPONSE ===
+Status: 200
+Server: Werkzeug/3.1.9 Python/3.14.10, Werkzeug/3.0.1 Python/3.11
+Date: Fri, 27 Nov 2026 09:13:47 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 2085
+Set-Cookie: lab_session=demo-session-token-12345; Path=/
+X-Powered-By: Flask/3.0.3 Python/3.11
+Connection: close
+
+Response excerpt:
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;title&gt;Lab Target — Home&lt;/title&gt;
+  &lt;style&gt;
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 760px;
+      margin: 40px auto;
+      padding: 0 20px;
+      color: #222;
+    }
+    h1 { color: #b91c1c; }
+    h2 { color: #374151; }
+    nav a { margin-right: 16px; color: #1d4ed8; text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+    .warning { background: #fef3c7; border: 1px solid #fcd34d;
+  
+
+=== NOTES ===
+Cookie &#x27;lab_session&#x27; is set without the HttpOnly flag.
+Full Set-Cookie header: lab_session=demo-session-token-12345; Path=/</pre>
+          <h4>Remediation</h4>
+          <p>Add the HttpOnly attribute to the &#x27;lab_session&#x27; cookie. Example: Set-Cookie: session=value; Secure; HttpOnly; SameSite=Strict</p>
+        </section>
+        
+        <section class="finding" id="finding-8">
+          <h3><span class="num">7.</span> Technology Banner Disclosed via Server
+            <span class="badge badge-medium">Medium</span>
+          </h3>
+          <table class="meta-table">
+            <tr><th>Category</th><td>A05 Security Misconfiguration</td></tr>
+            <tr><th>Severity</th><td><span class="badge badge-medium">Medium</span></td></tr>
+            <tr><th>Affected URL</th><td><code>http://127.0.0.1:5000</code></td></tr>
+            <tr><th>Evidence SHA-256</th><td><code class="hash">0b742fc178545403ed296c575bad5551d9d9d84df0885cd60cf360b541b51154</code></td></tr>
+          </table>
+          <h4>Description</h4>
+          <p>The response header &#x27;Server&#x27; reveals backend technology details: &#x27;Werkzeug/3.1.9 Python/3.14.10, Werkzeug/3.0.1 Python/3.11&#x27;. A specific version number is disclosed, which helps attackers quickly look up known vulnerabilities (CVEs) for that version. </p>
+          <h4>Evidence</h4>
+          <pre class="evidence">=== REQUEST ===
+GET http://127.0.0.1:5000
+User-Agent: SentinelScan/1.0 (security-research; authorized-scan)
+Accept-Encoding: gzip, deflate, zstd
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Connection: keep-alive
+Accept-Language: en-US,en;q=0.5
+Cookie: lab_session=demo-session-token-12345
+
+
+=== RESPONSE ===
+Status: 200
+Server: Werkzeug/3.1.9 Python/3.14.10, Werkzeug/3.0.1 Python/3.11
+Date: Fri, 27 Nov 2026 09:13:47 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 2085
+Set-Cookie: lab_session=demo-session-token-12345; Path=/
+X-Powered-By: Flask/3.0.3 Python/3.11
+Connection: close
+
+Response excerpt:
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;title&gt;Lab Target — Home&lt;/title&gt;
+  &lt;style&gt;
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 760px;
+      margin: 40px auto;
+      padding: 0 20px;
+      color: #222;
+    }
+    h1 { color: #b91c1c; }
+    h2 { color: #374151; }
+    nav a { margin-right: 16px; color: #1d4ed8; text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+    .warning { background: #fef3c7; border: 1px solid #fcd34d;
+  
+
+=== NOTES ===
+Disclosed header: Server: Werkzeug/3.1.9 Python/3.14.10, Werkzeug/3.0.1 Python/3.11
+Contains version string: True</pre>
+          <h4>Remediation</h4>
+          <p>Remove or suppress the &#x27;Server&#x27; header in your web server or application configuration. For nginx: &#x27;server_tokens off;&#x27;  For Apache: &#x27;ServerTokens Prod&#x27; and &#x27;ServerSignature Off&#x27;  For Express.js: &#x27;app.disable(&quot;x-powered-by&quot;);&#x27;</p>
+        </section>
+        
+        <section class="finding" id="finding-9">
+          <h3><span class="num">8.</span> Technology Banner Disclosed via X-Powered-By
+            <span class="badge badge-medium">Medium</span>
+          </h3>
+          <table class="meta-table">
+            <tr><th>Category</th><td>A05 Security Misconfiguration</td></tr>
+            <tr><th>Severity</th><td><span class="badge badge-medium">Medium</span></td></tr>
+            <tr><th>Affected URL</th><td><code>http://127.0.0.1:5000</code></td></tr>
+            <tr><th>Evidence SHA-256</th><td><code class="hash">69bb26910505c8019a32e7171e7d6f80151475b953147232d77227cd26b4c846</code></td></tr>
+          </table>
+          <h4>Description</h4>
+          <p>The response header &#x27;X-Powered-By&#x27; reveals backend technology details: &#x27;Flask/3.0.3 Python/3.11&#x27;. A specific version number is disclosed, which helps attackers quickly look up known vulnerabilities (CVEs) for that version. </p>
+          <h4>Evidence</h4>
+          <pre class="evidence">=== REQUEST ===
+GET http://127.0.0.1:5000
+User-Agent: SentinelScan/1.0 (security-research; authorized-scan)
+Accept-Encoding: gzip, deflate, zstd
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Connection: keep-alive
+Accept-Language: en-US,en;q=0.5
+Cookie: lab_session=demo-session-token-12345
+
+
+=== RESPONSE ===
+Status: 200
+Server: Werkzeug/3.1.9 Python/3.14.10, Werkzeug/3.0.1 Python/3.11
+Date: Fri, 27 Nov 2026 09:13:47 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 2085
+Set-Cookie: lab_session=demo-session-token-12345; Path=/
+X-Powered-By: Flask/3.0.3 Python/3.11
+Connection: close
+
+Response excerpt:
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;title&gt;Lab Target — Home&lt;/title&gt;
+  &lt;style&gt;
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 760px;
+      margin: 40px auto;
+      padding: 0 20px;
+      color: #222;
+    }
+    h1 { color: #b91c1c; }
+    h2 { color: #374151; }
+    nav a { margin-right: 16px; color: #1d4ed8; text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+    .warning { background: #fef3c7; border: 1px solid #fcd34d;
+  
+
+=== NOTES ===
+Disclosed header: X-Powered-By: Flask/3.0.3 Python/3.11
+Contains version string: True</pre>
+          <h4>Remediation</h4>
+          <p>Remove or suppress the &#x27;X-Powered-By&#x27; header in your web server or application configuration. For nginx: &#x27;server_tokens off;&#x27;  For Apache: &#x27;ServerTokens Prod&#x27; and &#x27;ServerSignature Off&#x27;  For Express.js: &#x27;app.disable(&quot;x-powered-by&quot;);&#x27;</p>
+        </section>
+        
+        <section class="finding" id="finding-4">
+          <h3><span class="num">9.</span> Missing Referrer-Policy Header
+            <span class="badge badge-low">Low</span>
+          </h3>
+          <table class="meta-table">
+            <tr><th>Category</th><td>A05 Security Misconfiguration</td></tr>
+            <tr><th>Severity</th><td><span class="badge badge-low">Low</span></td></tr>
+            <tr><th>Affected URL</th><td><code>http://127.0.0.1:5000</code></td></tr>
+            <tr><th>Evidence SHA-256</th><td><code class="hash">bdd71dbed91a84bb7a94720e4e4c3dfc50e34a6fdf90bd8b5183cf5684aa7728</code></td></tr>
+          </table>
+          <h4>Description</h4>
+          <p>The HTTP response does not include the &#x27;Referrer-Policy&#x27; security header. Controls how much referrer information is sent with requests, reducing information leakage to third parties.</p>
+          <h4>Evidence</h4>
+          <pre class="evidence">=== REQUEST ===
+GET http://127.0.0.1:5000
+User-Agent: SentinelScan/1.0 (security-research; authorized-scan)
+Accept-Encoding: gzip, deflate, zstd
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Connection: keep-alive
+Accept-Language: en-US,en;q=0.5
+
+
+=== RESPONSE ===
+Status: 200
+Server: Werkzeug/3.1.9 Python/3.14.10, Werkzeug/3.0.1 Python/3.11
+Date: Fri, 27 Nov 2026 09:13:47 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 2085
+Set-Cookie: lab_session=demo-session-token-12345; Path=/
+X-Powered-By: Flask/3.0.3 Python/3.11
+Connection: close
+
+Response excerpt:
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;title&gt;Lab Target — Home&lt;/title&gt;
+  &lt;style&gt;
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 760px;
+      margin: 40px auto;
+      padding: 0 20px;
+      color: #222;
+    }
+    h1 { color: #b91c1c; }
+    h2 { color: #374151; }
+    nav a { margin-right: 16px; color: #1d4ed8; text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+    .warning { background: #fef3c7; border: 1px solid #fcd34d;
+                padding: 10px 14px; border-radius: 4px; margin-bottom: 16px;
+                font-size: .875rem; }
+    pre { background: #f3f4f6; padding: 12px; border-radius: 4px;
+           font-size: .875rem; white-space: pre-wrap; }
+    input[type=text], input[type=password] {
+      padding: 7px 10px; border: 1px solid #d1d5db;
+      border-radius: 4px; font-size: 1rem; width: 260px;
+    }
+    button { padding: 7px 20px; background: #1d4ed8; color: #fff;
+              border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class=&quot;warning&quot;&gt;
+    This is an intentionally vulnerable application for security testing demos only.
+    Do not expose it to any network.
+  &lt;/div&gt;
+  &lt;nav&gt;
+    &lt;a href=&quot;/&quot;&gt;Home&lt;/a&gt;
+    &lt;a href=&quot;/xss&quot;&gt;XSS Demo&lt;/a&gt;
+    &lt;a href=&quot;/sqli&quot;&gt;SQLi Demo&lt;/a&gt;
+    &lt;a href=&quot;/login&quot;&gt;Login (no CSRF)&lt;/a&gt;
+    &lt;a href=&quot;/robots.txt&quot;&gt;robots.txt&lt;/a&gt;
+  &lt;/nav&gt;
+  &lt;hr style=&quot;margin: 16px 0&quot;&gt;
+  
+    &lt;h1&gt;Sentinel Scan Lab Target&lt;/h1&gt;
+    &lt;p&gt;This F
+
+=== NOTES ===
+Header &#x27;Referrer-Policy&#x27; was not present in the HTTP response.</pre>
+          <h4>Remediation</h4>
+          <p>Add: Referrer-Policy: strict-origin-when-cross-origin (or a stricter value) to control referrer leakage.</p>
+        </section>
+        
+        <section class="finding" id="finding-5">
+          <h3><span class="num">10.</span> Missing Permissions-Policy Header
+            <span class="badge badge-low">Low</span>
+          </h3>
+          <table class="meta-table">
+            <tr><th>Category</th><td>A05 Security Misconfiguration</td></tr>
+            <tr><th>Severity</th><td><span class="badge badge-low">Low</span></td></tr>
+            <tr><th>Affected URL</th><td><code>http://127.0.0.1:5000</code></td></tr>
+            <tr><th>Evidence SHA-256</th><td><code class="hash">10a80514c49f19f056cd35f2ff88f6a09c456b62a3dd9128f3a8ff546e844c8b</code></td></tr>
+          </table>
+          <h4>Description</h4>
+          <p>The HTTP response does not include the &#x27;Permissions-Policy&#x27; security header. Restricts which browser features (camera, microphone, etc.) the page and embedded iframes may use.</p>
+          <h4>Evidence</h4>
+          <pre class="evidence">=== REQUEST ===
+GET http://127.0.0.1:5000
+User-Agent: SentinelScan/1.0 (security-research; authorized-scan)
+Accept-Encoding: gzip, deflate, zstd
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Connection: keep-alive
+Accept-Language: en-US,en;q=0.5
+
+
+=== RESPONSE ===
+Status: 200
+Server: Werkzeug/3.1.9 Python/3.14.10, Werkzeug/3.0.1 Python/3.11
+Date: Fri, 27 Nov 2026 09:13:47 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 2085
+Set-Cookie: lab_session=demo-session-token-12345; Path=/
+X-Powered-By: Flask/3.0.3 Python/3.11
+Connection: close
+
+Response excerpt:
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;title&gt;Lab Target — Home&lt;/title&gt;
+  &lt;style&gt;
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 760px;
+      margin: 40px auto;
+      padding: 0 20px;
+      color: #222;
+    }
+    h1 { color: #b91c1c; }
+    h2 { color: #374151; }
+    nav a { margin-right: 16px; color: #1d4ed8; text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+    .warning { background: #fef3c7; border: 1px solid #fcd34d;
+                padding: 10px 14px; border-radius: 4px; margin-bottom: 16px;
+                font-size: .875rem; }
+    pre { background: #f3f4f6; padding: 12px; border-radius: 4px;
+           font-size: .875rem; white-space: pre-wrap; }
+    input[type=text], input[type=password] {
+      padding: 7px 10px; border: 1px solid #d1d5db;
+      border-radius: 4px; font-size: 1rem; width: 260px;
+    }
+    button { padding: 7px 20px; background: #1d4ed8; color: #fff;
+              border: none; border-radius: 4px; cursor: pointer; font-size: 1rem; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class=&quot;warning&quot;&gt;
+    This is an intentionally vulnerable application for security testing demos only.
+    Do not expose it to any network.
+  &lt;/div&gt;
+  &lt;nav&gt;
+    &lt;a href=&quot;/&quot;&gt;Home&lt;/a&gt;
+    &lt;a href=&quot;/xss&quot;&gt;XSS Demo&lt;/a&gt;
+    &lt;a href=&quot;/sqli&quot;&gt;SQLi Demo&lt;/a&gt;
+    &lt;a href=&quot;/login&quot;&gt;Login (no CSRF)&lt;/a&gt;
+    &lt;a href=&quot;/robots.txt&quot;&gt;robots.txt&lt;/a&gt;
+  &lt;/nav&gt;
+  &lt;hr style=&quot;margin: 16px 0&quot;&gt;
+  
+    &lt;h1&gt;Sentinel Scan Lab Target&lt;/h1&gt;
+    &lt;p&gt;This F
+
+=== NOTES ===
+Header &#x27;Permissions-Policy&#x27; was not present in the HTTP response.</pre>
+          <h4>Remediation</h4>
+          <p>Add a Permissions-Policy header listing only the features your application actually uses. Example: Permissions-Policy: geolocation=(), camera=(), microphone=()</p>
+        </section>
+        
+        <section class="finding" id="finding-7">
+          <h3><span class="num">11.</span> Cookie &#x27;lab_session&#x27; Missing SameSite Attribute
+            <span class="badge badge-low">Low</span>
+          </h3>
+          <table class="meta-table">
+            <tr><th>Category</th><td>A02 Cryptographic Failures</td></tr>
+            <tr><th>Severity</th><td><span class="badge badge-low">Low</span></td></tr>
+            <tr><th>Affected URL</th><td><code>http://127.0.0.1:5000</code></td></tr>
+            <tr><th>Evidence SHA-256</th><td><code class="hash">a748ca0c45f6726a914bddc193ec8883bb4eb56446e2d31f2d2a1e9eea018f29</code></td></tr>
+          </table>
+          <h4>Description</h4>
+          <p>The cookie &#x27;lab_session&#x27; has no SameSite attribute. Without SameSite=Strict or SameSite=Lax, the browser will send this cookie with cross-site requests, increasing CSRF risk.</p>
+          <h4>Evidence</h4>
+          <pre class="evidence">=== REQUEST ===
+GET http://127.0.0.1:5000
+User-Agent: SentinelScan/1.0 (security-research; authorized-scan)
+Accept-Encoding: gzip, deflate, zstd
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Connection: keep-alive
+Accept-Language: en-US,en;q=0.5
+Cookie: lab_session=demo-session-token-12345
+
+
+=== RESPONSE ===
+Status: 200
+Server: Werkzeug/3.1.9 Python/3.14.10, Werkzeug/3.0.1 Python/3.11
+Date: Fri, 27 Nov 2026 09:13:47 GMT
+Content-Type: text/html; charset=utf-8
+Content-Length: 2085
+Set-Cookie: lab_session=demo-session-token-12345; Path=/
+X-Powered-By: Flask/3.0.3 Python/3.11
+Connection: close
+
+Response excerpt:
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;title&gt;Lab Target — Home&lt;/title&gt;
+  &lt;style&gt;
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 760px;
+      margin: 40px auto;
+      padding: 0 20px;
+      color: #222;
+    }
+    h1 { color: #b91c1c; }
+    h2 { color: #374151; }
+    nav a { margin-right: 16px; color: #1d4ed8; text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+    .warning { background: #fef3c7; border: 1px solid #fcd34d;
+  
+
+=== NOTES ===
+Cookie &#x27;lab_session&#x27; is set without a SameSite attribute.
+Full Set-Cookie header: lab_session=demo-session-token-12345; Path=/</pre>
+          <h4>Remediation</h4>
+          <p>Add SameSite=Strict (or SameSite=Lax) to the &#x27;lab_session&#x27; cookie. SameSite=Strict provides the strongest protection; use Lax if top-level navigations must carry the cookie.</p>
+        </section>
+        
+
+  <hr style="margin:40px 0;border:none;border-top:1px solid #e5e7eb">
+  <p style="font-size:11px;color:#9ca3af;text-align:center">
+    Generated by Sentinel Scan v1.0.0 — rule-based vulnerability scanner —
+    for authorised testing only
+  </p>
+</body>
+</html>

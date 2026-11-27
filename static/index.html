@@ -171,6 +171,17 @@
       <!-- Severity summary chips -->
       <div class="severity-summary" id="severity-summary" role="list" aria-label="Severity counts"></div>
 
+      <!-- Module execution timings accordion/card -->
+      <div class="card" id="results-timing-card" style="margin-bottom: 20px; padding: 16px 20px;" hidden>
+        <div style="display:flex; justify-content:space-between; align-items:center; cursor:pointer;" id="timing-toggle-btn">
+          <h3 style="margin:0; font-size:0.9375rem; color:var(--navy);">Execution Timings (<span id="results-total-duration">--</span>)</h3>
+          <span style="font-size:0.8125rem; color:var(--text-secondary);">Toggle details</span>
+        </div>
+        <div id="results-timing-details" style="margin-top:12px; border-top:1px solid var(--border); padding-top:12px;" hidden>
+          <div id="results-timing-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:8px; font-size:0.8125rem;"></div>
+        </div>
+      </div>
+
       <!-- Filter and search bar -->
       <div class="filter-bar" role="search">
         <input

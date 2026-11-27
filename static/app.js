@@ -362,6 +362,9 @@ async function loadResultsScreen(scanId) {
     // Severity summary
     renderSeveritySummary(findings);
 
+    // Render timings if available
+    renderExecutionTimings(scan);
+
     // Render filtered list
     renderFindingsList();
 
@@ -380,6 +383,49 @@ async function loadResultsScreen(scanId) {
     titleEl.textContent = "Error loading results";
     subtitleEl.textContent = err.message;
   }
+}
+
+function renderExecutionTimings(scan) {
+  const timingCard = document.getElementById("results-timing-card");
+  const totalDurationEl = document.getElementById("results-total-duration");
+  const timingGrid = document.getElementById("results-timing-grid");
+  const toggleBtn = document.getElementById("timing-toggle-btn");
+  const detailsEl = document.getElementById("results-timing-details");
+
+  if (!timingCard || !scan.scan_meta) {
+    if (timingCard) timingCard.hidden = true;
+    return;
+  }
+
+  let meta = {};
+  try {
+    meta = typeof scan.scan_meta === "string" ? JSON.parse(scan.scan_meta) : scan.scan_meta;
+  } catch (e) {
+    timingCard.hidden = true;
+    return;
+  }
+
+  if (!meta.module_durations) {
+    timingCard.hidden = true;
+    return;
+  }
+
+  timingCard.hidden = false;
+  totalDurationEl.textContent = `${meta.total_duration_seconds}s total`;
+
+  timingGrid.innerHTML = Object.entries(meta.module_durations)
+    .map(
+      ([mod, dur]) => `
+      <div style="background:var(--gray-50); padding:6px 10px; border-radius:var(--radius-sm); border:1px solid var(--border); display:flex; justify-content:space-between;">
+        <span style="color:var(--gray-700); font-weight:500;">${escHtml(mod)}</span>
+        <span style="font-family:ui-monospace,monospace; color:var(--navy);">${dur}s</span>
+      </div>`
+    )
+    .join("");
+
+  toggleBtn.onclick = () => {
+    detailsEl.hidden = !detailsEl.hidden;
+  };
 }
 
 function renderSeveritySummary(findings) {
